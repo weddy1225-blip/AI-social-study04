@@ -31,7 +31,6 @@
             position: relative; border: 6px solid #fff;
         }
 
-        /* 啟動頁面 */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #fff; z-index: 100;
@@ -48,11 +47,9 @@
         }
         .start-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #E56E56; }
 
-        /* 頂部欄 */
         #header { background: var(--primary); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.1rem; flex-shrink: 0; }
         #status-bar { background: rgba(255,255,255,0.8); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: bold; flex-shrink: 0; }
 
-        /* 對話區域 */
         #chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; }
         .message-group { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -63,24 +60,14 @@
         .ai-msg { background: var(--ai-bubble); border-top-left-radius: 2px; }
         .user-msg { background: var(--user-bubble); border-top-right-radius: 2px; }
 
-        /* 選項區域 */
-        #options-area { 
-            padding: 20px; background: #fff; border-top-left-radius: 30px; border-top-right-radius: 30px;
-            display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;
-        }
+        #options-area { padding: 20px; background: #fff; border-top-left-radius: 30px; border-top-right-radius: 30px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
         .option-btn { background: #F8F9FA; border: 2.5px solid var(--secondary); padding: 15px; border-radius: 15px; cursor: pointer; text-align: center; font-weight: bold; font-size: 1rem; color: #444; transition: 0.2s; }
         .option-btn:hover { background: var(--secondary); color: white; }
 
-        /* 進度條 */
         .progress-bg { width: 80px; height: 12px; background: #eee; border-radius: 10px; overflow: hidden; }
         .progress-fill { height: 100%; width: 0%; background: #FFAAA5; transition: width 0.6s ease; }
 
-        /* 遊戲結束頁 */
-        #end-screen { 
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #fff; z-index: 110; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 40px; text-align: center;
-        }
+        #end-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 110; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; }
         .medal { font-size: 6rem; margin-bottom: 20px; }
         #end-screen h1 { color: var(--primary); margin: 10px 0; font-size: 2rem; }
     </style>
@@ -120,57 +107,58 @@
 </div>
 
 <script>
-    const fullQuestionBank = [
-        { q: "這裡原本有一大片稻田跟小溪，怎麼現在都不見了？", options: ["現在稻田變少了，變成了住宅和工廠喔！", "因為外星人把稻田搬到月球去了！", "現在大家都不吃飯，所以不用種田。"], correct: 0, feedback: "原來是這樣！難怪這裡多了這麼多建築物。" },
-        { q: "以前我們上學都要走路走好久，現在我看大家好像都很快就到學校了？", options: ["我們發明了隱形的翅膀！", "現在有公車、捷運，還有爸媽騎機車載我們！", "我們現在都在家裡睡覺不用上學。"], correct: 1, feedback: "捷運？聽起來像地底下的火車，速度一定很快吧！" },
-        { q: "以前我們放假都會去廟前看戲，現在大家放假都去哪裡玩呀？", options: ["現在大家都去百貨公司、圖書館或大公園！", "現在大家都躲在山洞裡。", "家鄉變成了巨大的雲霄飛車場。"], correct: 0, feedback: "高樓大廈跟大圖書館！聽起來未來的家鄉變得很熱鬧。" },
-        { q: "我肚子好餓喔，以前我們都去雜貨店買零食，你們現在還有嗎？", options: ["現在很少雜貨店，我們都去 24 小時的便利商店！", "我們現在都直接種田拔雜草吃。", "我們現在不出門，等外送送到家。"], correct: 0, feedback: "便利商店都不關門嗎？那老闆一定很辛苦！" },
-        { q: "以前我們家鄉只有一條泥土路，為什麼現在的路又黑又亮？", options: ["那是柏油路，更平坦而且下雨不會泥濘喔！", "那是塗了黑巧克力。", "那是為了讓大家晚上看不到路。"], correct: 0, feedback: "柏油路啊！那走起來一定很舒服，腳不會髒了。" },
-        { q: "這棟好高的建築物是什麼？好像快要碰到雲了！", options: ["那是大樓，裡面可以住很多戶人家或辦公室。", "那是通往外星的電梯。", "那是巨人族的拐杖。"], correct: 0, feedback: "一棟房子住這麼多人？未來的技術真先進！" },
-        { q: "以前我們都要去河邊洗衣服，你們現在也是嗎？", options: ["我們現在用洗衣機，在家裡按一下開關就好！", "我們現在都不洗衣服，穿髒就丟掉。", "我們現在用念力讓衣服變乾淨。"], correct: 0, feedback: "洗衣機？那媽媽們洗衣服就輕鬆多了！" },
-        { q: "你們手裡拿的小盒子是什麼？大家一直盯著它看？", options: ["那是智慧型手機，可以查資料、看影片跟聯絡人。", "那是發光的魔法石。", "那是用來偵測怪物的儀器。"], correct: 0, feedback: "這麼小就能看影片？未來的人真幸福。" },
-        { q: "以前我們照明都用煤油燈或蠟燭，你們現在怎麼都不怕黑？", options: ["我們現在到處都有電燈，開關一按就亮！", "我們眼睛進化了，可以在黑暗中看見。", "我們隨身帶著螢火蟲。"], correct: 0, feedback: "電燈真方便，晚上看書也沒問題了！" },
-        { q: "以前要聯絡遠方的親戚要寫信等好幾天，你們現在怎麼辦？", options: ["我們用語音通話或視訊，一秒鐘就能看到對方！", "我們訓練了老鷹傳信。", "我們大聲喊叫，對方就聽到了。"], correct: 0, feedback: "視訊？可以看到對方的臉？太不可思議了！" },
-        { q: "以前我們家鄉有很多水牛在幫忙耕田，現在怎麼都沒看到了？", options: ["現在都用耕耘機等機械，力氣比水牛還大！", "水牛都去動物園放假了。", "水牛進化成會飛的牛了。"], correct: 0, feedback: "耕耘機？機械化的時代真的來臨了呢！" },
-        { q: "以前我們家鄉有很多竹林，現在怎麼變成了漂亮的大公園？", options: ["因為大家需要運動休息的地方，所以規劃了公園。", "因為竹林被怪獸吃光了。", "因為土地會自己變身。"], correct: 0, feedback: "大公園聽起來很棒，大家可以聚在一起玩耍。" },
-        { q: "這路口紅紅綠綠的燈是什麼意思？大家看到都會停下來？", options: ["那是紅綠燈，用來指揮交通、保護大家安全。", "那是裝飾用的聖誕燈。", "那是外星人發出的訊號。"], correct: 0, feedback: "原來是為了安全，未來的人很有秩序感！" },
-        { q: "以前我們都要去井裡打水，你們現在呢？", options: ["我們有自來水，水龍頭一轉就有乾淨的水！", "我們每天等下雨拿杯子接水。", "我們去超商買空氣變成水。"], correct: 0, feedback: "自來水！不用辛苦提水真是太好了。" },
-        { q: "以前我們讀書都用毛筆，你們現在還在用嗎？", options: ["現在我們常用鉛筆或原子筆，還有用平板電腦呢！", "我們現在不用筆，用手指在沙灘上寫字。", "我們現在不用讀書了。"], correct: 0, feedback: "平板電腦？看來讀書的方式也變得很豐富。" },
-        { q: "以前家鄉的垃圾都隨便丟或燒掉，現在怎麼看到大家在分顏色丟？", options: ["那是垃圾分類和回收，為了保護地球環境喔！", "那是為了把垃圾做成藝術品。", "因為垃圾桶有強迫症。"], correct: 0, feedback: "回收再利用？未來的人對環境保護很用心。" },
-        { q: "以前我們都要煮飯要燒柴，你們現在也是嗎？", options: ["我們現在用瓦斯爐或電磁爐，不用燒柴冒煙了！", "我們現在直接曬太陽把食物曬熟。", "我們現在都吃生的。"], correct: 0, feedback: "瓦斯爐真乾淨，不用再弄得滿臉黑灰了。" },
-        { q: "以前家鄉只有幾間平房，現在怎麼有這麼多百貨公司？", options: ["因為人口變多，商業活動也變得很發達。", "因為百貨公司是從地底下冒出來的。", "百貨公司是外星人的基地。"], correct: 0, feedback: "人口變多、生活也變得更便利了呢！" },
-        { q: "以前我們生病要走好遠找郎中，現在怎麼到處都有亮亮的門診？", options: ["現在醫療很進步，診所跟醫院就在家門口附近！", "因為大家現在都不會生病了。", "因為超商也有賣藥。"], correct: 0, feedback: "看醫生變方便了，這對家鄉的人很重要。" },
-        { q: "這路上有好多長長的車子在跑，為什麼它不用鐵軌也能載很多人？", options: ["那是公車（巴士），有固定的路線載大家！", "那是被拉長的彩色怪獸。", "那是滑行的巨龍。"], correct: 0, feedback: "公車真不錯，大家可以一起坐車去遠方。" },
-        { q: "以前我們家鄉的溪水可以抓魚洗澡，現在怎麼變得很整齊？", options: ["因為進行了河川整治，預防淹水也變漂亮了！", "因為魚都去睡覺了。", "因為河川會自動變身。"], correct: 0, feedback: "河川整治後看起來更有精神了！" },
-        { q: "以前我們要買衣服要自己縫，你們現在呢？", options: ["現在有成衣店和百貨公司，可以直接買喜歡的衣服！", "我們現在都用 3D 列印噴在身上。", "我們現在都不穿衣服。"], correct: 0, feedback: "買衣服真方便，選擇一定非常多吧。" },
-        { q: "以前我們要吹風只能拿扇子，你們現在怎麼都不流汗？", options: ["我們有電風扇和冷氣機，風很涼爽喔！", "我們喝了冰凍藥水。", "我們住在冰箱裡。"], correct: 0, feedback: "冷氣機？那夏天一定也能睡得很舒服。" },
-        { q: "以前家鄉的人都在種田，現在大家都在做什麼工作？", options: ["現在大家在公司上班、開店，或者研發科技！", "現在大家都在當專業的睡覺家。", "現在大家都在抓外星人. "], correct: 0, feedback: "工作的選擇變多了，家鄉也跟著進步了。" },
-        { q: "以前我們放學後都玩彈珠、跳繩，你們現在玩什麼？", options: ["我們玩桌遊、打電動，或是去公園運動！", "我們玩抓恐龍遊戲。", "我們每天都在飛。"], correct: 0, feedback: "打電動？聽起來未來的娛樂非常豐富！" },
-        { q: "以前家鄉很少看到外國人，現在怎麼路邊常聽見不同語言？", options: ["現在是全球化的時代，大家會到不同的國家交流！", "因為外星人偽裝成人類。", "因為大家都變成了翻譯機器人。"], correct: 0, feedback: "世界各地的人都來交流，家鄉變得很有國際感。" },
-        { q: "以前我們都要看報紙才知道新聞，你們現在呢？", options: ["我們直接用手機或看新聞台，一發生大事就知道！", "我們聽風傳遞消息。", "我們等貓咪告訴我們。"], correct: 0, feedback: "訊息傳遞這麼快，大家反應一定也很迅速。" },
-        { q: "這路上好多人戴著安全帽騎的是什麼？還會發出嗶嗶聲？", options: ["那是電動機車，不用汽油而且很安靜喔！", "那是會跑的板凳。", "那是偵測地震的機器。"], correct: 0, feedback: "不用汽油也能跑？未來的能源真神奇。" },
-        { q: "以前我們家鄉的夜市很小，現在怎麼這麼壯觀？", options: ["因為觀光發展，夜市變成家鄉特色之一了！", "因為半夜會長出更多攤位。", "因為夜市是時空隧道。"], correct: 0, feedback: "好想吃吃看未來的夜市食物喔！" },
-        { q: "謝謝你告訴我這麼多，我發現家鄉變得更便利了，這是好轉變嗎？", options: ["是的！雖然環境變了，但大家生活更安全舒服了！", "不是，我覺得以前比較好。", "不知道，我也在迷路。"], correct: 0, feedback: "聽你這麼說我就放心了，我要帶著這些記憶回去了！" }
+    const normalQuestions = [
+        { q: "這裡原本有一大片稻田跟小溪，怎麼現在都不見了？", options: ["現在稻田變少了，變成了住宅和工廠喔！", "因為外星人把稻田搬到月球去了！", "現在大家都不吃飯，所以不用種田。"], correctText: "現在稻田變少了，變成了住宅和工廠喔！", feedback: "原來是這樣！難怪這裡多了這麼多建築物。" },
+        { q: "以前我們上學都要走路走好久，現在我看大家好像都很快就到學校了？", options: ["我們發明了隱形的翅膀！", "現在有公車、捷運，還有爸媽騎機車載我們！", "我們現在都在家裡睡覺不用上學。"], correctText: "現在有公車、捷運，還有爸媽騎機車載我們！", feedback: "捷運？聽起來像在地底下的火車，速度一定很快吧！" },
+        { q: "以前我們放假都會去廟前看戲，現在大家放假都去哪裡玩呀？", options: ["現在大家都去百貨公司、圖書館或大公園！", "現在大家都躲在山洞裡。", "家鄉變成了巨大的雲霄飛車場。"], correctText: "現在大家都去百貨公司、圖書館或大公園！", feedback: "高樓大廈跟大圖書館！聽起來未來的家鄉變得很熱鬧。" },
+        { q: "我肚子好餓喔，以前我們都去雜貨店買零食，你們現在還有嗎？", options: ["現在很少雜貨店，我們都去 24 小時的便利商店！", "我們現在都直接種田拔雜草吃。", "我們現在不出門，等外送送到家。"], correctText: "現在很少雜貨店，我們都去 24 小時的便利商店！", feedback: "便利商店都不關門嗎？那老闆一定很辛苦！" },
+        { q: "以前我們家鄉只有一條泥土路，為什麼現在的路又黑又亮？", options: ["那是柏油路，更平坦而且下雨不會泥濘喔！", "那是塗了黑巧克力。", "那是為了讓大家晚上看不到路。"], correctText: "那是柏油路，更平坦而且下雨不會泥濘喔！", feedback: "柏油路啊！那走起來一定很舒服，腳不會髒了。" },
+        { q: "這棟好高的建築物是什麼？好像快要碰到雲了！", options: ["那是大樓，裡面可以住很多戶人家或辦公室。", "那是通往外星的電梯。", "那是巨人族的拐杖。"], correctText: "那是大樓，裡面可以住很多戶人家或辦公室。", feedback: "一棟房子住這麼多人？未來的技術真先進！" },
+        { q: "以前我們都要去河邊洗衣服，你們現在也是嗎？", options: ["我們現在用洗衣機，在家裡按一下開關就好！", "我們現在都不洗衣服，穿髒就丟掉。", "我們現在用念力讓衣服變乾淨。"], correctText: "我們現在用洗衣機，在家裡按一下開關就好！", feedback: "洗衣機？那媽媽們洗衣服就輕鬆多了！" },
+        { q: "你們手裡拿的小盒子是什麼？大家一直盯著它看？", options: ["那是智慧型手機，可以查資料、看影片跟聯絡人。", "那是發光的魔法石。", "那是用來偵測怪物的儀器。"], correctText: "那是智慧型手機，可以查資料、看影片跟聯絡人。", feedback: "這麼小就能看影片？未來的人真幸福。" },
+        { q: "以前我們照明都用煤油燈或蠟燭，你們現在怎麼都不怕黑？", options: ["我們現在到處都有電燈，開關一按就亮！", "我們眼睛進化了，可以在黑暗中看見。", "我們隨身帶著螢火蟲。"], correctText: "我們現在到處都有電燈，開關一按就亮！", feedback: "電燈真方便，晚上看書也沒問題了！" },
+        { q: "以前要聯絡遠方的親戚要寫信等好幾天，你們現在怎麼辦？", options: ["我們用語音通話或視訊，一秒鐘就能看到對方！", "我們訓練了老鷹傳信。", "我們大聲喊叫，對方就聽到了。"], correctText: "我們用語音通話或視訊，一秒鐘就能看到對方！", feedback: "視訊？可以看到對方的臉？太不可思議了！" },
+        { q: "以前我們家鄉有很多水牛在幫忙耕田，現在怎麼都沒看到了？", options: ["現在都用耕耘機等機械，力氣比水牛還大！", "水牛都去動物園放假了。", "水牛進化成會飛的牛了。"], correctText: "現在都用耕耘機等機械，力氣比水牛還大！", feedback: "耕耘機？機械化的時代真的來臨了呢！" },
+        { q: "以前我們家鄉有很多竹林，現在怎麼變成了漂亮的大公園？", options: ["因為大家需要運動休息的地方，所以規劃了公園。", "因為竹林被怪獸吃光了。", "因為土地會自己變身。"], correctText: "因為大家需要運動休息的地方，所以規劃了公園。", feedback: "大公園聽起來很棒，大家可以聚在一起玩耍。" },
+        { q: "這路口紅紅綠綠的燈是什麼意思？大家看到都會停下來？", options: ["那是紅綠燈，用來指揮交通、保護大家安全。", "那是裝飾用的聖誕燈。", "那是外星人發出的訊號。"], correctText: "那是紅綠燈，用來指揮交通、保護大家安全。", feedback: "原來是為了安全，未來的人很有秩序感！" },
+        { q: "以前我們都要去井裡打水，你們現在呢？", options: ["我們有自來水，水龍頭一轉就有乾淨的水！", "我們每天等下雨拿杯子接水。", "我們去超商買空氣變成水。"], correctText: "我們有自來水，水龍頭一轉就有乾淨的水！", feedback: "自來水！不用辛苦提水真是太好了。" },
+        { q: "以前我們讀書都用毛筆，你們現在還在用嗎？", options: ["現在我們常用鉛筆或原子筆，還有用平板電腦呢！", "我們現在不用筆，用手指在沙灘上寫字。", "我們現在不用讀書了。"], correctText: "現在我們常用鉛筆或原子筆，還有用平板電腦呢！", feedback: "平板電腦？看來讀書的方式也變得很豐富。" },
+        { q: "以前家鄉的垃圾都隨便丟或燒掉，現在怎麼看到大家在分顏色丟？", options: ["那是垃圾分類和回收，為了保護地球環境喔！", "那是為了把垃圾做成藝術品。", "因為垃圾桶有強迫症。"], correctText: "那是垃圾分類和回收，為了保護地球環境喔！", feedback: "回收再利用？未來的人對環境保護很用心。" },
+        { q: "以前我們都要煮飯要燒柴，你們現在也是嗎？", options: ["我們現在用瓦斯爐或電磁爐，不用燒柴冒煙了！", "我們現在直接曬太陽把食物曬熟。", "我們現在都吃生的。"], correctText: "我們現在用瓦斯爐或電磁爐，不用燒柴冒煙了！", feedback: "瓦斯爐真乾淨，不用再弄得滿臉黑灰了。" },
+        { q: "以前家鄉只有幾間平房，現在怎麼有這麼多百貨公司？", options: ["因為人口變多，商業活動也變得很發達。", "因為百貨公司是從地底下冒出來的。", "百貨公司是外星人的基地。"], correctText: "因為人口變多，商業活動也變得很發達。", feedback: "人口變多、生活也變得更便利了呢！" },
+        { q: "以前我們生病要走好遠找郎中，現在怎麼到處都有亮亮的門診？", options: ["現在醫療很進步，診所跟醫院就在家門口附近！", "因為大家現在都不會生病了。", "因為超商也有賣藥。"], correctText: "現在醫療很進步，診所跟醫院就在家門口附近！", feedback: "看醫生變方便了，這對家鄉的人很重要。" },
+        { q: "這路上有好多長長的車子在跑，為什麼它不用鐵軌也能載很多人？", options: ["那是公車（巴士），有固定的路線載大家！", "那是被拉長的彩色怪獸。", "那是滑行的巨龍。"], correctText: "那是公車（巴士），有固定的路線載大家！", feedback: "公車真不錯，大家可以一起坐車去遠方。" },
+        { q: "以前我們家鄉的溪水可以抓魚洗澡，現在怎麼變得很整齊？", options: ["因為進行了河川整治，預防淹水也變漂亮了！", "因為魚都去睡覺了。", "因為河川會自動變身。"], correctText: "因為進行了河川整治，預防淹水也變漂亮了！", feedback: "河川整治後看起來更有精神了！" },
+        { q: "以前我們要買衣服要自己縫，你們現在呢？", options: ["現在有成衣店和百貨公司，可以直接買喜歡的衣服！", "我們現在都用 3D 列印噴在身上。", "我們現在都不穿衣服。"], correctText: "現在有成衣店和百貨公司，可以直接買喜歡的衣服！", feedback: "買衣服真方便，選擇一定非常多吧。" },
+        { q: "以前我們要吹風只能拿扇子，你們現在怎麼都不流汗？", options: ["我們有電風扇和冷氣機，風很涼爽喔！", "我們喝了冰凍藥水。", "我們住在冰箱裡。"], correctText: "我們有電風扇和冷氣機，風很涼爽喔！", feedback: "冷氣機？那夏天一定也能睡得很舒服。" },
+        { q: "以前家鄉的人都在種田，現在大家都在做什麼工作？", options: ["現在大家在公司上班、開店，或者研發科技！", "現在大家都在當專業的睡覺家。", "現在大家都在抓外星人。"], correctText: "現在大家在公司上班、開店，或者研發科技！", feedback: "工作的選擇變多了，家鄉也跟著進步了。" },
+        { q: "以前我們放學後都玩彈珠、跳繩，你們現在玩什麼？", options: ["我們玩桌遊、打電動，或是去公園運動！", "我們玩抓恐龍遊戲。", "我們每天都在飛。"], correctText: "我們玩桌遊、打電動，或是去公園運動！", feedback: "打電動？聽起來未來的娛樂非常豐富！" },
+        { q: "以前家鄉很少看到外國人，現在怎麼路邊常聽見不同語言？", options: ["現在是全球化的時代，大家會到不同的國家交流！", "因為外星人偽裝成人類。", "因為大家都變成了翻譯機器人。"], correctText: "現在是全球化的時代，大家會到不同的國家交流！", feedback: "世界各地的人都來交流，家鄉變得很有國際感。" },
+        { q: "以前我們都要看報紙才知道新聞，你們現在呢？", options: ["我們直接用手機或看新聞台，一發生大事就知道！", "我們聽風傳遞消息。", "我們等貓咪告訴我們。"], correctText: "我們直接用手機或看新聞台，一發生大事就知道！", feedback: "訊息傳遞這麼快，大家反應一定也很迅速。" },
+        { q: "這路上好多人戴著安全帽騎的是什麼？還會發出嗶嗶聲？", options: ["那是電動機車，不用汽油而且很安靜喔！", "那是會跑的板凳。", "那是偵測地震的機器。"], correctText: "那是電動機車，不用汽油而且很安靜喔！", feedback: "不用汽油也能跑？未來的能源真神奇。" },
+        { q: "以前我們家鄉的夜市很小，現在怎麼這麼壯觀？", options: ["因為觀光發展，夜市變成家鄉特色之一了！", "因為半夜會長出更多攤位。", "因為夜市是時空隧道。"], correctText: "因為觀光發展，夜市變成家鄉特色之一了！", feedback: "好想吃吃看未來的夜市食物喔！" }
     ];
+
+    const finalQuestion = { 
+        q: "謝謝你告訴我這麼多，我發現家鄉變得更便利了，這是好轉變嗎？", 
+        options: ["是的！雖然環境變了，但大家生活更安全舒服了！", "不是，我覺得以前比較好。", "不知道，我也在迷路。"], 
+        correctText: "是的！雖然環境變了，但大家生活更安全舒服了！", 
+        feedback: "聽你這麼說我就放心了，我要帶著這些記憶回去了！" 
+    };
 
     let currentScenarios = [];
     let currentStep = 0;
     let repairProgress = 0;
 
-    function getRandomQuestions(n) {
-        const shuffled = [...fullQuestionBank].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, n);
-    }
-
     function startGame() {
         document.getElementById('start-screen').style.display = 'none';
-        currentScenarios = getRandomQuestions(5);
+        const shuffled = [...normalQuestions].sort(() => 0.5 - Math.random());
+        currentScenarios = [...shuffled.slice(0, 4), finalQuestion];
         currentStep = 0;
         repairProgress = 0;
         document.getElementById('progress-fill').style.width = '0%';
         document.getElementById('chat-box').innerHTML = '';
-        
-        appendMessage('系統', '連線成功！正在從 30 個時空片段隨機選取 5 個修復點...', 'ai-msg');
+        appendMessage('系統', '連線成功！正在重組記憶碎片...', 'ai-msg');
         setTimeout(() => {
             document.getElementById('level-indicator').innerText = `任務 1 / 5`;
             appendMessage('阿強', currentScenarios[0].q, 'ai-msg');
@@ -191,45 +179,43 @@
         group.appendChild(name);
         group.appendChild(msg);
         chatBox.appendChild(group);
-
-        // 自動捲動到底部
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function renderOptions() {
         const area = document.getElementById('options-area');
         area.innerHTML = '';
-        if (currentStep >= currentScenarios.length) {
-            area.style.display = 'none';
-            return;
-        }
+        if (currentStep >= currentScenarios.length) return;
 
-        currentScenarios[currentStep].options.forEach((opt, index) => {
+        // 【優化點】將當前題目的選項隨機打亂
+        const scenario = currentScenarios[currentStep];
+        const shuffledOpts = [...scenario.options].sort(() => 0.5 - Math.random());
+
+        shuffledOpts.forEach(opt => {
             const btn = document.createElement('div');
             btn.className = 'option-btn';
             btn.innerText = opt;
-            btn.onclick = () => selectOption(index);
+            // 點擊時傳入選項文字進行比對
+            btn.onclick = () => selectOption(opt);
             area.appendChild(btn);
         });
-
-        // 選項出現後，再次強制捲動確保最後一句對話可見
+        
         const chatBox = document.getElementById('chat-box');
         setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
     }
 
-    function selectOption(index) {
+    function selectOption(selectedText) {
         const scenario = currentScenarios[currentStep];
-        appendMessage('你', scenario.options[index], 'user-msg');
+        appendMessage('你', selectedText, 'user-msg');
         document.getElementById('options-area').innerHTML = '';
 
         setTimeout(() => {
-            if (index === scenario.correct) {
+            // 【優化點】改用正確答案文字內容進行比對
+            if (selectedText === scenario.correctText) {
                 repairProgress += 20;
                 document.getElementById('progress-fill').style.width = repairProgress + '%';
-                
                 appendMessage('阿強', scenario.feedback, 'ai-msg');
                 currentStep++;
-
                 setTimeout(() => {
                     if (currentStep < currentScenarios.length) {
                         document.getElementById('level-indicator').innerText = `任務 ${currentStep + 1} / 5`;
@@ -237,17 +223,12 @@
                         renderOptions();
                     } else {
                         document.getElementById('level-indicator').innerText = `修復達成`;
-                        appendMessage('阿強', "謝謝你，我全都記起來了！這就是我最愛的家鄉，只是它變得很棒！", 'ai-msg');
-                        setTimeout(() => {
-                            document.getElementById('end-screen').style.display = 'flex';
-                        }, 2000);
+                        setTimeout(() => { document.getElementById('end-screen').style.display = 'flex'; }, 1500);
                     }
                 }, 1200);
             } else {
                 appendMessage('阿強', '嗯...聽起來怪怪的，再想一下喔。', 'ai-msg');
-                setTimeout(() => {
-                    renderOptions();
-                }, 1000);
+                setTimeout(() => { renderOptions(); }, 1000);
             }
         }, 800);
     }
